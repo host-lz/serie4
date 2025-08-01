@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Attack on Titan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+<style>
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
+.scrollbar-hide {
+-ms-overflow-style: none;
+scrollbar-width: none;
+}
+body, html {
+margin: 0;
+padding: 0;
+height: 100%;
+}
+body::before {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-image: url('https://image.tmdb.org/t/p/w500//y6re1YeUJJIAOhCG7CzFbnX70Mq.jpg');
+background-size: cover;
+background-position: center;
+z-index: -2;
+}
+body::after {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.75);
+z-index: -1;
+}
+#iframe-principal {
+width: 100%;
+height: 220px;
+border: none;
+background: black;
+}
+#contenedor-video {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 10;
+}
+.capitulo-seleccionado {
+background-color: #FF0000 !important;
+color: #fff !important;
+font-weight: bold;
+border-bottom: none !important;
+}
+</style>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-622CWCXV7F"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-622CWCXV7F');
+</script>
+
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool@latest'></script>
+</head>
+<body class="text-white font-sans leading-relaxed">
+
+
+<div id="contenedor-video" class="relative">
+
+<iframe id="iframe-principal" allow="fullscreen" allowfullscreen></iframe>
+
+<a href="https://zinecia.github.io/Home" aria-label="Volver" class="absolute top-3 left-3 text-white text-2xl z-20">
+<i class="fas fa-arrow-left"></i>
+</a>
+
+<!-- Bloqueador de clics -->
+<div class="absolute top-0 left-0 w-full h-full z-10" style="pointer-events: none;"></div>
+</div>
+
+
+<!-- CONTENIDO -->
+<div class="px-4 pt-60 pb-4 space-y-4">
+
+<div class="flex items-center justify-between">
+<h1 class="text-xl sm:text-2xl font-bold">Attack on Titan T<span id="temp-titulo">1</span></h1>
+<button aria-label="Favorito" class="bg-[#1f1f1f] px-3 py-1 rounded text-sm flex items-center gap-2">
+
+</button>
+</div>
+
+<!-- Calificación y género -->
+<div class="flex flex-wrap items-center gap-3 text-sm text-gray-400">
+<span><strong class="text-[#FF7F00]">8.7</strong> / 10</span>
+<span class="text-white">•</span>
+<span>Animación,Sci-Fi & Fantasy,Action & Adventure,</span><span class="text-white">•</span><span>2013</span>
+</div>
+
+<!-- Selector de Temporadas -->
+<div class="flex items-center gap-3">
+<label for="temporada" class="text-sm text-gray-300">Temporada:</label>
+<select id="temporada" class="bg-[#1f1f1f] text-white px-3 py-1 rounded text-sm">
+<option value="1">Temporada 1</option>
+<option value="2">Temporada 2</option>
+<option value="3">Temporada 3</option>
+<option value="4">Temporada 4</option>
+</select>
+</div>
+
+
+<div class="flex space-x-2 overflow-x-auto scrollbar-hide pb-1" id="lista-capitulos">
+
+</div>
+
+<!-- Sinopsis -->
+<div class="bg-[#1e1e1e] rounded-lg p-4 text-sm text-gray-300 leading-relaxed">
+<p><span class="font-semibold text-white">Sinopsis:</span>Muchos años atrás, la humanidad estuvo al borde de la extinción con la aparición de unas criaturas gigantes que devoraban a todas las personas. Huyendo, la humanidad consiguió sobrevivir en una ciudad fortificada de altas murallas que se ha convertido en el último reducto de la civilización contra los Titanes que campan a sus anchas por el mundo. Ahora esa paz está a punto de verse interrumpida por una cadena de acontecimientos que llevará a desvelar qué son los Titanes y cómo aparecieron.</p>
+</div>
+
+</div>
+
+<script>
+var serieId = "1429";
+var temporadaSelect = document.getElementById('temporada');
+var listaCapitulos = document.getElementById('lista-capitulos');
+var tempTitulo = document.getElementById('temp-titulo');
+var btnFavorito = document.querySelector('button[aria-label="Favorito"]');
+var iconoCorazon = btnFavorito.querySelector('i');
+var iframePrincipal = document.getElementById('iframe-principal');
+
+var serieActual = {
+id: serieId,
+titulo: "Attack on Titan",
+temporada: temporadaSelect.value,
+poster: "https://image.tmdb.org/t/p/w500//yFPQ4JhhirnCVe2UIKGMYX7TOGZ.jpg"
+};
+
+var videosPorCapitulo = {
+"1": {
+"1": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1u0ZUNtSmM62_iEqYKhrFLow_k8VbAkUp",
+  "2": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1EboENL8hVsVa45Ebzgpsf9w853ZE2wQT",
+  "3": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1mmpvcM6ynsGLG16MjqtDC5I-hUQR0INH",
+  "4": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1qGFFJbV3wtayVQBtByV_4lc_-ScpuvlX",
+  "5": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1PcfdfhkgDZ1Z2Nm_oRORdqh0ewr_vxdq",
+  "6": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1h6gcrjtYuTdBUVYEir2M12ZtjgBwBCbz",
+  "7": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1bpBJVbIbCIpDeUKYoWO3OL9oC9LIgric",
+  "8": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1YrFAwQceN6DoRudHWE5o9mN7PXoc0rqo",
+  "9": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1pjVZ5wNr9bBSNJByzvq7HwjHgMk7Lua8",
+  "10": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1kcBo4sgcI4nYlNbninaiN-eNslReCN55",
+  "11": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1cBKqCQBVVPX7KqgdZNmPLtMpkWXZL1pj",
+  "12": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1emLQpskjZ5cAuhERQE4yYomx9OJJ56Dc",
+  "13": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1qp-9P4YGv2RoQb5vW8QLLrI0sP-UeeIo",
+  "14": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Ur8ZM6NX1FBwYZ1zdNveJ5n05gM6326y",
+  "15": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1bDpjXNZczKpl2pADfvR5F_3gpWZLYt6G",
+  "16": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1sWTQGpMZf84Dsie8tBM1aMTiPS7friLx",
+  "17": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=18_DhOSm0WZUTdJtTHjN9DlXQjW0BlZvJ",
+  "18": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1gxKEzFiHJFdzdzwC6T0v8foDGXwv6TrP",
+  "19": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1au6t8UMHvvaNKEV-o8X4Pvxv6HU9XnpG",
+  "20": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=12e7IqWiUw9k1LPOFlqqTVuBVIzu7eC1f",
+  "21": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1S9DWTjdQ3dfz4oud0p_RBhiuiiDf8bBU",
+  "22": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1r_Pd6NjphuzK3T51fpXcfAorHhik9Ml2",
+  "23": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1iWUQ5okib1sSxv5iC30o8-OjytHf9LW-",
+  "24": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1dmmiLHZICaoorVr_HH5CbN2iE833mtP7",
+  "25": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=130nVHF5tlrD2BtP-MuZkyyw9IVni-eLb"
+},
+"2": {
+"1": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1DPr10nWr5U8MEY-UbzG5oxHwyZK2N5XY",
+  "2": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1gPath41xJNSIxB0nnVlzdS0cA5N1u_oT",
+  "3": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1GqJRIJXWAKF8AfXZokIlD8KxtIvveYZW",
+  "4": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Ukl5-57nEUgZUNmRjMAn9XxyjNnPlmCS",
+  "5": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1IdmG2Iu2fior5kQyA2jNSaZs21BNO9hm",
+  "6": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1nr-vqL_EaOHZH0Bg9U5Z12SFjzyjvA9O",
+  "7": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1QcIBuKnI7NFENcmxLKYzwwfSwj7QJpIX",
+  "8": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1_ZcKnMmtfDkQw6POJKXcpYOsEUpWVpP-",
+  "9": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1tErgivyZFZrKVlq_cuqgYy_ZFFsaB_7Q",
+  "10": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Ob96e1pdKl-8X2RQH0FmDEJD7tw1T0Zv",
+  "11": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=11nC4e6DJGvqyVK_3VtHdR_OEvrwRG07d",
+  "12": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1P4QHcUI4AofWxsFZo36AcVqaKJhc75WR"
+},
+"3": {
+"1": "https://unlimplay.com/embed/?T0t5b2RjZ05rQnU1TzgrTVV4WG5rYnNITU9Bd3VuaDVJbzUzMnp0VFRod3VLN1RrenVHaWNXTnk1OXRYT1VlM1RTelp1T29JVFJtU3BodXlVcEd1UFluUElJN05CZVNNd001ZWhtbFh5Rk9SUWgwTkR3R3V6S0lHNUV6ZHFmKzRScE1sVmdhYTZBUXZMWmxMaG5mbWtnPT0,",
+  "2": "https://unlimplay.com/embed/?dG5qVkhQdTk2MngvODRtcXhxMGViZkVYUXo5VXVlY3EySGlEaEdKMUJ2QkNRQUFHbTFQWFpBRzRJN1hpUlpvZkR4QnZPWlN6VDRwZnRkNWpBRnhHd0VxTzZRaUhxRjJXK3pZc00rQ1o2SWplVlUxalRCT1VMSFFEUW5KNXkyWklwZkxOVzUvYng1S3BsUXkwY3B0Q2NnPT0,",
+  "3": "https://unlimplay.com/embed/?R2pDUW5QVTJuQ1FpWWZlZXkyMVFpNktjL0RmNU5ORm1HSDR3ajhCWlFRaTRnL1IwcGlNZUp3RytkMzVsYWZkQzdUb2thdTE0ZlQrRzJuQXFhSWd1WHcxKytNMjl4R3ZkQlZiMnVXdlFSLyt6aUdIQjJWT3VmaUkrMEM0WDIrd3dJQWp3U3N5clR5WkN5Y2tkOGRpdXRBPT0,",
+  "4": "https://unlimplay.com/embed/?RTh1Z2R0MDlxR2IyT01STENwV0RxbzlmUDN1L09vZGIveTFWdGxuTi9TT21PZGovc0x2eUZ3N3dYekxZbUFuQnpScGZFaU9lVXFiZEpRSUpuWkFNbUJ3K0t5Z2t0aVNWRzBxN1NydFNmNmdWcWpNanlaYVRQNWJSVXREV096bEpYTU81VGNQYkc5YjE5K3N4SFR0OEpnPT0,",
+  "5": "https://unlimplay.com/embed/?VEFSVml0alp4MFUycEovUTFyU1pNSko0S1N5VXlDYjh2UVpXTkJNQWxKYVBXYUpDaDFBbW5LS1JMYnNRTVVnZ1lDMXlrOTZnY3l4THQ1SU1xVFhZUXE2T3lEN21iQS9adTlPT1IrMXdPNitSK0hZWDJpcms0L1RtcVZmQjlSbWxmVk15RUlTRHBFdUdjWUVYVDR5UFp3PT0,",
+  "6": "https://unlimplay.com/embed/?dFlUVmJEWTk3aFZxNUZIQjkvaVFOcjVBaVZMb1VhTEQ5ck4yTlBjWlJianhleGg1Wis0M0xEM1N1OGNKUzFnb1pQVVA5eDBNaUVvZE50KzhWazRjVjkyemtFUlU2V2pONDEwblFTTWxtbEtvSnZNYk1TR3hDREtHYVp6Sk9ZL3Q,",
+  "7": "https://unlimplay.com/embed/?aFpVRkVwdHpPR2RUMUZ4UXF5bGJqZE51MGxZUWRLRzBaUDc2YkxGcHllSEZsTEVESU52eHFXbkhxcTZ0UlpML0luSEF5QWoveUdpanRHMUtvQmVzeG1jNnhQM2lBVGhpYVpGbkh6dHAxcU1ZVXY0U1N1MmhHWnYxTWZ5ZkZNNGd1ekMzdWN4MFdmS3ZXdzBYR2pYbGJBPT0,",
+  "8": "https://unlimplay.com/embed/?bXFHdjNjRWRKcmI0Ujl4WDdKYXI3Njh5Mnc3Wk8ydDNEa1pxTlFOVWxHVUdlcWdtdkROcldubUZQNldNMVZ4eGtka29GRm1BeTdEMzA2WVpBbC9YR1k5QzRNNUpmb09jVW1qVExCOHVMYWlQZEN1NXo1OVpkUWFlTWZIYnhtTWs,",
+  "9": "https://unlimplay.com/embed/?QTRpT1pvbmorUmcxTGpoUU1GM1R4UllZSGt6cnMyVlphQmx2QUdTZzdMZVVJeGlBVjlydUZHeVE3MnN2MXM0NkpvWjJrMFhTblQ5WHQrMWxuZjllRFZQSk85RG82TVI4WU1TWFhHc2dxRS9kMjBETnJIbzEzK1lJMTZ2NVZOcXI,",
+  "10": "https://unlimplay.com/embed/?L1J0K1dCN1kvM3RERlMwNWJReHlwMnpuNm5abDJ0NEZuMFpmZ0trMVJadDVmTWRsUHozb2h3QUliRS92SjYzSnhTQ2UvN3FveFJTalVLUWVEOWFUbkRrcnRRQm02VFhrQldSRklVSGQva0JjMjAybDlVMHVzL3pmTXNoVTBmUCs,",
+  "11": "https://unlimplay.com/embed/?aFQ1dlUyVGxNSSswYURSaEcyL2t1NXJoRnBrY1Zob3dIWmVJNHRIR3NDUXZPUllnN2ZIdWM1NnMyMlg1RXZmRXplTHI2c0cyTTBHVDZsZ1dGTFJBRXh2Ykh2MlhkQ1lNZ3ZDV2s5VnpPZFVRYmJScXBVNDZvTlhTWWkydENEeVJDL29LK2RCeFQrMW4va3hjT1E3cWh3PT0,",
+  "12": "https://unlimplay.com/embed/?aDB4L0dxWTJLVHk5a2x2ODI4MlRFVFk1UG5jZGJVellMWWMzaHlDZkFYdXEzMGt0K3U0UlRmYlhaMjRPZE1LR05MZTlIUXY2NWZlbWp2cmxrbmlTZ3RSWnpCQWdCZXgrSU1Jdi9MMGVDcXQxMnJDOVcrcXd6QktDVmdvZ1hXaHJ0OTJJSit5ZWJydHBEQnB1VGM3QWZRPT0,",
+  "13": "https://unlimplay.com/embed/?SmhMUHJuZThmRjVkV2xxWDZZV2MxbDlES1NQUzVEanFKNHpERzVNZGdCVE5tV254QlVLQXplMzhna1hQME4wQlRPdGdBWVpBUVF0akFpMUlQeXBjVVFkckx5Rkk1bzRpcVp4OUhDQ0VDWmRSN0JjK00vTjF5d1BHbTNXdUZEVGkybm9mSzkzU3NIbU5hMnBUbGxNNWpRPT0,",
+  "14": "https://unlimplay.com/embed/?dk9xRDdLM1dDNldPV0x6cnZxbGdTQndoUVh0a0ZlMFBaS0tNaVhwYUpZL0FnM0x0Rm9CRGpjMDgzazVCeld5K243Zy9mM1o0dGlDVFlvdTI5YzhkQlEvYXR0dmEzRGxKRWo1QkVZcFZQdHVMS2xVRDRaZFVZZ053Tk5TSlF4bm03VVlVL096V01ZN2lJd2VYOSs2dlZnPT0,",
+  "15": "https://unlimplay.com/embed/?elVzb0ZGTnMvQ1lwbndNcCtQMklpQVJUY044QSsvZUNtekM2YWpvNVFxWkJHUnRLQmJQNTUzZFRTUUF0M1FqZjRvb243Um9zZW12Rnk5emdpYjFkVW5XbkMzczd1dGF1RDhabHFyRjFBNG93dUJjZ2VGbnVtNll0dU5QL28xckxHdU9YV0laY2NsdlM2QzJBQmdxMEFBPT0,",
+  "16": "https://unlimplay.com/embed/?L1RGWEdtZjQ2WnZMOUNoa1FMbE9Id1RDUU5LeDIvZmRKUXlXRVdaeFkveUlGVVJzeUI3c1cvM1lQRDhjSzg0ZFg2U2R2dndSYlN4WWU2cVdYaHpjaUk3RlI0anIyT1FwamJpM29PTUFPUU91c2xiVThsVzlPbDZlOWR5eTdXL1U,",
+  "17": "https://unlimplay.com/embed/?R3lZdmxTVjBBQ0FTS25aNlZicC9RY3hpTjFNb3kyTHErL2p4Q2N1dC9XMkJsS2ZXd091RmRNMDJkMHNoY1NjSHRaNmFTaG1jdENpT2t1MS8vV2t4QlB3TnQxc2RKeTdKbHdVdm1NbUpObVROc3pJa2NYZzdYNjhvM2p4Mk56T0s,",
+  "18": "https://unlimplay.com/embed/?VTRtR3JTN1F4WDdWQUpCQkFNUXE4OVBqS0Fmc0loY1gzRFF6WlBxYU1UM2FyTW5ZbGtiaWlROXNnczJWK0NIMVZvb0xaWEtUOEd0VytxMnI0SENmaUQ4MWh4NG5LTUdDNUVUMFAvc0k2MTVKUGZPbW12cHRzaVREanVEdTNJSGU,",
+  "19": "https://unlimplay.com/embed/?Um1PSzZPcXFoV0FxRFJYR2k0UWZ4T2g2dXJKbFhEcFl2U3VESyt5QVVURVU1aC80K2ZGY2ZrekZIRW1QMFVTQ3AvcHVmVXlkL0VWb2pRRC9UZEpSM08xcHc4U0pTVzRlNGY1UmpGSWxMRTk2bnh0ejI2VUI0T3ordDJwSWZUd3RRdGpSR0NDUVRHRjBSbnVHR2V5VFd3PT0,",
+  "20": "https://unlimplay.com/embed/?WXFMVEx4eG9FZEVnZTd4THB6aEIrc3B1dzQ5M2ZIb0oxQ3loSHd2eWd5MWp2aDhZMFFKNEtzV2RqdDhraERVY3hEK0FQazBJR0hFQ3FjZ1VxSTFHMmZqa1FwYmRaT0wwOGcrcGl0eGFEKzdyaFphVXJ6bEhUS1M2a0ZNSGkxU2tocC9SM0RoRWVRMTMyMlZ2dDBiY2h3PT0,",
+  "21": "https://unlimplay.com/embed/?M2pKYWtpZTV5eFB6V0RkZHpVQi9CNmoybE1sOXd2TWw1T1htTWZ5SDArdVcxYnlNU1dJUm1sUUNSdlFnQ2QxY1c3OHFFVEQ1dW53Qm9Ydk1ZeDlIRkVrVnJFQXJMcnVja21yNmF2anBoVERGOHJhQnlNNkJvQXh1SDJGeHBSZms,",
+  "22": "https://unlimplay.com/embed/?YXpubkVVL3dTYVdER0ZRVC9xcHo0ZW5aZTJHNFRTWmNZcjdFalZRblJTQnJSVHphK3NCTkhZcnFCNzdmUU5VYlFmejlybUMxRVRhelQvQTdESnZkUDF4dWtKNmZuNVJNdWpHYTBSMjdLVVh2VWdEV3pySnpIaVpOdlorQzIybVo,"
+},
+
+"4": {
+"1": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1eLZ9PrZ1JNU8bIZ3NRHRI__z1i__EVHB",
+  "2": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1dfqfwl3zoPvTE51W5g-7Jgpg0zaap6r-",
+  "3": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1w9oyGGs2r1cI0O_n_2x4VKr0QMG4Aydk",
+  "4": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1j6XT_TFRDCDmGbECK6MazAxbrJg6TYS8",
+  "5": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=10go2CcedQFylC9iys5bcB7sEXerOu2Nk",
+  "6": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=14L1uUNPW_PrqLihx4cvGHGuXKg7CvFn3",
+  "7": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1FsK2BO6NI0MQNL2mwYaFT2q2ykjehXk5",
+  "8": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1oydnGLV4n2vhO_harHT_hGbTlaTbvfxr",
+  "9": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1K_hMwRsGhPPS84BvIYdhrHD8wxV-AMta",
+  "10": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1OzM9mx-wFvAYF9kaG9sV5ZXasYwz5x5v",
+  "11": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1eUepsPEspPaiPgupejChLcQx45O3LJEY",
+  "12": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=127hh6HjzAIyf-O2GNX6gNkzqASd-Fsej",
+  "13": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1gPlRio83i5EgGA3I0w1eodO_EmEyoSn0",
+  "14": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1J-If9yai1dPLmYzxFzJY2hO19zNab3rg",
+  "15": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1pQoSE4QQofdN_ZpHTCG7GStm3Um9_hpC",
+  "16": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=16Tjptxc8oKwL7WmgJ8X7PkMxr9GPHktl",
+  "17": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1PQzIFijMM5VKgEMzgz_tBcQrVzKT5676",
+  "18": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Co6WWjWjVLuWqcO5Pm8HwaXioBUEeUm8",
+  "19": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1VLNFJrEWBQBwUEgRgcVy6xfgwC67lRfb",
+  "20": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Nizwjr4KxuGlztrXtO9UiqDhmroF4I9w",
+  "21": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1XN324vS540pV_XiyQadXCG3L2PE4kXn3",
+  "22": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=146P6Xxv7U31aPsvrVG0mqh3_ULAeG1C1",
+  "23": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1OeVDKVWC15xFtfcw_6vwNoeDl5z-M702",
+  "24": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1dRRg37nztATpAA8Ij1QUPPtdObbaaNo-",
+  "25": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1Itlz8I95sBB21RD1MQ3IWie-Cj9SwYzS",
+  "26": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1vy8o0M1dt6r_R8zfAbQ4z2z_fiWMfLZV",
+  "27": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1ZbExjoj9qNuJg_NZlmW4jJYftoFw6hHo",
+  "28": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=gdrive&format=video%2Fmp4&link=1kgzBcOLGxLOyFKRFXeMezmU8oqlKHemS"
+},
+
+
+
+};
+
+function cargarFavoritos() {
+var favs = localStorage.getItem('seriesFavoritas');
+return favs ? JSON.parse(favs) : [];
+}
+
+function guardarFavoritos(favoritos) {
+localStorage.setItem('seriesFavoritas', JSON.stringify(favoritos));
+}
+
+function esFavorito(serie, favoritos) {
+return favoritos.some(function(fav) {
+return fav.id === serie.id && fav.temporada === serie.temporada;
+});
+}
+
+function actualizarBotonFavorito() {
+var favoritos = cargarFavoritos();
+if (esFavorito(serieActual, favoritos)) {
+btnFavorito.classList.add('bg-[#FF7F00]');
+iconoCorazon.classList.add('fas');
+iconoCorazon.classList.remove('far');
+} else {
+btnFavorito.classList.remove('bg-[#FF7F00]');
+iconoCorazon.classList.remove('fas');
+iconoCorazon.classList.add('far');
+}
+}
+
+btnFavorito.addEventListener('click', function() {
+var favoritos = cargarFavoritos();
+if (esFavorito(serieActual, favoritos)) {
+favoritos = favoritos.filter(function(fav) {
+return !(fav.id === serieActual.id && fav.temporada === serieActual.temporada);
+});
+} else {
+favoritos.push(Object.assign({}, serieActual));
+}
+guardarFavoritos(favoritos);
+actualizarBotonFavorito();
+});
+
+function guardarTemporada(temporada) {
+localStorage.setItem("temporadaSeleccionada_" + serieId, temporada);
+}
+
+function cargarTemporadaGuardada() {
+var temp = localStorage.getItem("temporadaSeleccionada_" + serieId);
+return temp ? temp : "1";
+}
+
+function guardarCapitulo(capitulo) {
+var key = "ultimoCapituloVisto_" + serieId + "_T" + serieActual.temporada;
+localStorage.setItem(key, capitulo);
+}
+
+function cargarCapituloGuardado() {
+var key = "ultimoCapituloVisto_" + serieId + "_T" + serieActual.temporada;
+var capituloGuardado = localStorage.getItem(key);
+var botones = listaCapitulos.getElementsByClassName('capitulo-btn');
+var encontrado = false;
+
+for (var i = 0; i < botones.length; i++) {
+botones[i].className = botones[i].className.replace(' capitulo-seleccionado', '');
+if (botones[i].getAttribute('data-capitulo') === capituloGuardado) {
+botones[i].className += ' capitulo-seleccionado';
+botones[i].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+cambiarVideo(capituloGuardado);
+encontrado = true;
+}
+}
+if (!encontrado) {
+cambiarVideo("1");
+}
+}
+
+function cambiarVideo(capitulo) {
+var temp = serieActual.temporada;
+var url = videosPorCapitulo[temp] && videosPorCapitulo[temp][capitulo];
+if (url) {
+iframePrincipal.src = url;
+guardarCapitulo(capitulo);
+}
+}
+
+function generarCapitulos(temporada) {
+listaCapitulos.innerHTML = '';
+var capitulosObj = videosPorCapitulo[temporada] || {};
+var total = Object.keys(capitulosObj).length;
+
+for (var i = 1; i <= total; i++) {
+var btn = document.createElement('button');
+btn.className = 'capitulo-btn px-4 py-2 rounded bg-[#2a2a2a] text-white';
+btn.setAttribute('data-capitulo', i.toString());
+btn.textContent = i;
+listaCapitulos.appendChild(btn);
+}
+agregarEventosCapitulos();
+cargarCapituloGuardado();
+}
+
+function agregarEventosCapitulos() {
+var botones = listaCapitulos.getElementsByClassName('capitulo-btn');
+for (var i = 0; i < botones.length; i++) {
+(function(index){
+botones[index].onclick = function() {
+for (var j = 0; j < botones.length; j++) {
+botones[j].className = botones[j].className.replace(' capitulo-seleccionado', '');
+}
+if (botones[index].className.indexOf('capitulo-seleccionado') === -1) {
+botones[index].className += ' capitulo-seleccionado';
+}
+botones[index].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+cambiarVideo(botones[index].getAttribute('data-capitulo'));
+};
+})(i);
+}
+}
+
+temporadaSelect.onchange = function() {
+var temp = temporadaSelect.value;
+serieActual.temporada = temp;
+tempTitulo.textContent = temp;
+guardarTemporada(temp);
+generarCapitulos(temp);
+actualizarBotonFavorito();
+};
+
+window.onload = function() {
+var tempGuardada = cargarTemporadaGuardada();
+temporadaSelect.value = tempGuardada;
+serieActual.temporada = tempGuardada;
+tempTitulo.textContent = tempGuardada;
+generarCapitulos(tempGuardada);
+actualizarBotonFavorito();
+};
+</script>
+</body>
+</html>
